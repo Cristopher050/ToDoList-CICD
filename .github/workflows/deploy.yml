@@ -2,16 +2,17 @@ name: Deploy to AWS EC2
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
 
-      - name: Deploy to EC2 via SSH
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -21,4 +22,15 @@ jobs:
             if [ ! -d "$HOME/todo-app" ]; then
               git clone https://github.com/Cristopher050/ToDoList-CICD.git $HOME/todo-app
             fi
-            cd $HOME/todo-app && git pull origin main && npm install && (pm2 restart all || pm2 start index.js --name "todo-app")
+
+            cd $HOME/todo-app
+            git fetch origin
+            git reset --hard origin/main
+
+            cd backend
+
+            npm install
+
+            pm2 delete todo-app || true
+            pm2 start index.js --name todo-app
+            pm2 save
