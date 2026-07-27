@@ -18,12 +18,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            if [ -d "$HOME/todo-app" ]; then
-              cd $HOME/todo-app
-              git pull origin main
-            else
+            if [ ! -d "$HOME/todo-app" ]; then
               git clone https://github.com/Cristopher050/ToDoList-CICD.git $HOME/todo-app
-              cd $HOME/todo-app
             fi
-            npm install
-            pm2 restart all || pm2 start index.js --name "todo-app"
+            cd $HOME/todo-app && git pull origin main && npm install && (pm2 restart all || pm2 start index.js --name "todo-app")
