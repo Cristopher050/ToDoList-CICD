@@ -1,4 +1,5 @@
 name: Deploy to AWS EC2
+
 on:
   push:
     branches: [ "main" ]
@@ -17,8 +18,12 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd ~/todo-app || git clone https://github.com/Cristopher050/ToDoList-CICD.git ~/todo-app
-            cd ~/todo-app
-            git pull origin main
+            if [ -d "$HOME/todo-app" ]; then
+              cd $HOME/todo-app
+              git pull origin main
+            else
+              git clone https://github.com/Cristopher050/ToDoList-CICD.git $HOME/todo-app
+              cd $HOME/todo-app
+            fi
             npm install
             pm2 restart all || pm2 start index.js --name "todo-app"
