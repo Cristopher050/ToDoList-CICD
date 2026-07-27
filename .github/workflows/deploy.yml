@@ -17,8 +17,9 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd ~/todo-app || git clone https://github.com/${{ github.repository }}.git ~/todo-app
+            cd ~/todo-app || git clone https://github.com/Cristopher050/ToDoList-CICD.git ~/todo-app
             cd ~/todo-app
             git pull origin main
-            docker compose down
-            docker compose up -d --build
+            # Añade aquí los comandos de tu app, por ejemplo:
+            npm install
+            pm2 restart all
