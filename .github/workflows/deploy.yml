@@ -17,8 +17,8 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            source ~/.bashrc || source ~/.profile
-            export PATH=$PATH:/usr/local/bin:~/.nvm/versions/node/$(ls ~/.nvm/versions/node 2>/dev/null | tail -n 1)/bin
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
             cd ~/todo-app || git clone https://github.com/Cristopher050/ToDoList-CICD.git ~/todo-app
             cd ~/todo-app
             git pull origin main
