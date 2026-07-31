@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management - To-Do List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: #f4f5f9;
+            color: #1e293b;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .app-card {
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(82, 70, 222, 0.08);
+            width: 100%;
+            max-width: 900px;
+            padding: 32px;
+        }
+
+        /* Banner Superior con Gradiente */
+        .header-banner {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            border-radius: 18px;
+            padding: 24px;
+            color: white;
+            margin-bottom: 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.25);
+        }
+
+        .header-banner h1 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .header-banner p {
+            font-size: 13px;
+            opacity: 0.85;
+            margin-top: 4px;
+        }
+
+        /* Formulario horizontal para añadir tarea */
+        .task-form {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 28px;
+            background: #f8fafc;
+            padding: 8px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .task-form input[type="text"] {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 12px 16px;
+            font-size: 14px;
+            outline: none;
+            color: #1e293b;
+        }
+
+        .task-form select {
+            border: none;
+            background: #ffffff;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #475569;
+            outline: none;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }
+
+        .btn-add {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-add:hover {
+            background: #4338ca;
+            transform: translateY(-1px);
+        }
+
+        /* Lista de tareas */
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .task-card {
+            background: #ffffff;
+            border: 1px solid #f1f5f9;
+            border-radius: 16px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .task-card:hover {
+            box-shadow: 0 8px 16px rgba(0,0,0,0.05);
+            transform: translateY(-2px);
+        }
+
+        .task-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* Icono según la prioridad */
+        .priority-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .icon-alta { background: #fef2f2; color: #ef4444; }
+        .icon-media { background: #fffbebfb; color: #f59e0b; }
+        .icon-baja { background: #f0fdf4; color: #10b981; }
+
+        .task-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .task-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .task-title.delivered {
+            text-decoration: line-through;
+            color: #94a3b8;
+        }
+
+        .task-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Badges estilizados */
+        .badge-priority {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 8px;
+            text-transform: uppercase;
+        }
+
+        .badge-alta { background: #fecdd3; color: #9f1239; }
+        .badge-media { background: #fef3c7; color: #92400e; }
+        .badge-baja { background: #dcfce7; color: #166534; }
+
+        .badge-status {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .st-pendiente { color: #64748b; }
+        .st-entregada { color: #10b981; font-weight: 600; }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action {
+            border: none;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-deliver {
+            background: #e0e7ff;
+            color: #4338ca;
+        }
+
+        .btn-deliver:hover {
+            background: #c7d2fe;
+        }
+
+        .btn-delete {
+            background: #fef2f2;
+            color: #ef4444;
+        }
+
+        .btn-delete:hover {
+            background: #fee2e2;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-card">
+        <!-- Header -->
+        <div class="header-banner">
+            <div>
+                <h1>Gestor de Tareas - EN VIVO</h1>
+                <p>Organiza tus entregas según su nivel de prioridad</p>
+            </div>
+            <div style="font-size: 28px;">📋</div>
+        </div>
+
+        <!-- Formulario horizontal -->
+        <div class="task-form">
+            <input type="text" id="taskInput" placeholder="Escribe el nombre de la tarea..." />
+            <select id="prioritySelect">
+                <option value="Baja">🟢 Prioridad Baja</option>
+                <option value="Media" selected>🟡 Prioridad Media</option>
+                <option value="Alta">🔴 Prioridad Alta</option>
+            </select>
+            <button class="btn-add" onclick="addTask()">+ Agregar</button>
+        </div>
+
+        <!-- Lista de tareas -->
+        <div class="task-list" id="taskList"></div>
+    </div>
+
+    <script>
+        const API_URL = '/api/todos';
+
+        async function fetchTasks() {
+            try {
+                const res = await fetch(API_URL);
+                const tasks = await res.json();
+                const list = document.getElementById('taskList');
+                list.innerHTML = '';
+
+                tasks.forEach(task => {
+                    const priority = task.priority || task.prioridad || 'Baja';
+                    const isDelivered = task.status === 'Entregada' || task.completed === true;
+                    
+                    const pLower = priority.toLowerCase();
+                    const iconSymbol = pLower === 'alta' ? '🔥' : (pLower === 'media' ? '⚡' : '📌');
+
+                    const safeTitle = (task.title || '').replace(/'/g, "\\'");
+
+                    list.innerHTML += `
+                        <div class="task-card">
+                            <div class="task-left">
+                                <div class="priority-icon icon-${pLower}">
+                                    ${iconSymbol}
+                                </div>
+                                <div class="task-details">
+                                    <span class="task-title ${isDelivered ? 'delivered' : ''}">${task.title}</span>
+                                    <div class="task-meta">
+                                        <span class="badge-priority badge-${pLower}">${priority}</span>
+                                        <span class="badge-status ${isDelivered ? 'st-entregada' : 'st-pendiente'}">
+                                            • ${isDelivered ? 'Entregada' : 'Pendiente'}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="task-actions">
+                                ${!isDelivered ? `<button class="btn-action btn-deliver" onclick="markDelivered(${task.id}, '${safeTitle}', '${priority}')">Entregar</button>` : ''}
+                                <button class="btn-action btn-delete" onclick="deleteTask(${task.id})">Eliminar</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (err) {
+                console.error("Error al obtener tareas:", err);
+            }
+        }
+
+        async function addTask() {
+            const input = document.getElementById('taskInput');
+            const priority = document.getElementById('prioritySelect').value;
+            if (!input.value.trim()) return;
+
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        title: input.value, 
+                        priority: priority, 
+                        status: 'Pendiente',
+                        completed: false 
+                    })
+                });
+
+                input.value = '';
+                fetchTasks();
+            } catch (err) {
+                console.error("Error al agregar tarea:", err);
+            }
+        }
+
+        async function markDelivered(id, title, priority) {
+            try {
+                await fetch(`${API_URL}/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        title: title,
+                        priority: priority,
+                        status: 'Entregada',
+                        completed: true 
+                    })
+                });
+                fetchTasks();
+            } catch (err) {
+                console.error("Error al entregar tarea:", err);
+            }
+        }
+
+        async function deleteTask(id) {
+            try {
+                await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+                fetchTasks();
+            } catch (err) {
+                console.error("Error al eliminar tarea:", err);
+            }
+        }
+
+        fetchTasks();
+    </script>
+</body>
+</html>
